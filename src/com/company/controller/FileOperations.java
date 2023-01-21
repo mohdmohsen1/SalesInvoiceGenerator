@@ -12,9 +12,10 @@ import com.company.model.*;
 
 //Class to help with file manipulation
 public class FileOperations {
+    private static final String headerFileName="InvoiceHeader.csv";
+    private static final String itemFileName="InvoiceLine.csv";
+
     static int currentInvoiceNumber = 0;
-    String pathHeader = "D:\\Testing Course\\Code\\Sales Invoice Generator\\src\\resources\\InvoiceHeader.csv";
-    String pathItem = "D:\\Testing Course\\Code\\Sales Invoice Generator\\src\\resources\\InvoiceLine.csv";
 
     public static int getCurrentInvoiceNumber() {
         return currentInvoiceNumber;
@@ -26,11 +27,11 @@ public class FileOperations {
 
     public ArrayList<InvoiceHeader> readFile() {// Read invoice data from CSV file
 
-
         ArrayList<InvoiceHeader> invoiceHeaderList = new ArrayList<>();
         try {
-            //getFileFromResource("InvoiceHeader.csv");
-            Scanner scannerHeader = new Scanner(new File(pathHeader));
+            File fileHeader = getFileFromResource(headerFileName);
+            File fileItem = getFileFromResource(itemFileName);
+            Scanner scannerHeader = new Scanner(fileHeader);
             InvoiceHeader invoiceHeader;
             while (scannerHeader.hasNextLine()) {
                 String[] headerLine = scannerHeader.nextLine().split(",");
@@ -42,7 +43,7 @@ public class FileOperations {
                     System.out.println("Wrong date format " + e);
                 }
                 String customerName = headerLine[2];
-                Scanner scannerItem = new Scanner(new File(pathItem));
+                Scanner scannerItem = new Scanner(fileItem);
                 ArrayList<InvoiceLine> invoiceLineList = new ArrayList<>();
                 while (scannerItem.hasNextLine()) {
                     String[] itemLine = scannerItem.nextLine().split(",");
@@ -70,13 +71,15 @@ public class FileOperations {
 
     public void writeFile(ArrayList<InvoiceHeader> invoiceHeaderList) {// Write invoice data to CSV file
         try {
-            FileWriter fileWriterHeader = new FileWriter(pathHeader, true);
+            File fileHeader = getFileFromResource(headerFileName);
+            File fileItem = getFileFromResource(itemFileName);
+            FileWriter fileWriterHeader = new FileWriter(fileHeader.getPath(), true);
             for (InvoiceHeader invoiceHeader : invoiceHeaderList
             ) {
                 DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
                 String invoiceDate = dateFormat.format(invoiceHeader.getInvoiceDate());
                 fileWriterHeader.write(invoiceHeader.getInvoiceNum() + "," + invoiceDate + "," + invoiceHeader.getCustomerName() + "\n");
-                FileWriter fileWriterItem = new FileWriter(pathItem, true);
+                FileWriter fileWriterItem = new FileWriter(fileItem.getPath(), true);
                 for (InvoiceLine invoiceLine : invoiceHeader.getInvoiceLines())
                     fileWriterItem.write(invoiceLine.getInvoiceNum() + "," + invoiceLine.getItemName() + "," + invoiceLine.getItemPrice() + "," + invoiceLine.getItemQuantity() + "\n");
                 fileWriterItem.close();
@@ -105,14 +108,17 @@ public class FileOperations {
         }
     }
 
-    private File getFileFromResource(String fileName) throws URISyntaxException {
-        fileName = pathHeader;
-        ClassLoader classLoader = getClass().getClassLoader();
-        URL resource = classLoader.getResource(fileName);
-        if (resource == null) {
-            throw new IllegalArgumentException("file not found! " + fileName);
-        } else {
-            return new File(resource.toURI());
+    private File getFileFromResource(String fileName) {
+        File file = null;
+        try {
+            ClassLoader classLoader = getClass().getClassLoader();
+            URL resource = classLoader.getResource(".//resources//" + fileName);
+            if (resource != null) {
+                file = new File(resource.toURI());
+            }
+        } catch (URISyntaxException e) {
+            System.out.println("File not found : " + e.getMessage());
         }
+        return file;
     }
 }
