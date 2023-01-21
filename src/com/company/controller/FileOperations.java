@@ -14,7 +14,6 @@ import com.company.model.*;
 public class FileOperations {
     private static final String headerFileName="InvoiceHeader.csv";
     private static final String itemFileName="InvoiceLine.csv";
-
     static int currentInvoiceNumber = 0;
 
     public static int getCurrentInvoiceNumber() {
