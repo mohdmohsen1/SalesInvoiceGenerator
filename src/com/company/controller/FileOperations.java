@@ -29,7 +29,7 @@ public class FileOperations {
 
         ArrayList<InvoiceHeader> invoiceHeaderList = new ArrayList<>();
         try {
-            getFileFromResource("InvoiceHeader.csv");
+            //getFileFromResource("InvoiceHeader.csv");
             Scanner scannerHeader = new Scanner(new File(pathHeader));
             InvoiceHeader invoiceHeader;
             while (scannerHeader.hasNextLine()) {
