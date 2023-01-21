@@ -16,70 +16,91 @@ import java.util.Date;
 import java.util.Scanner;
 
 public class Main {
-
-    //    Invoice1Num
-//    {
-//        Invoice1Date (DD/MM/YYYY), Customer1Name
-//        Item1Name, Item1Price, Count1
-//
-//    }
     public static void main(String[] args) {
         FileOperations fileOperations = new FileOperations();
         ArrayList<InvoiceHeader> invoiceHeaderList = fileOperations.readFile();
-        for (InvoiceHeader invoiceHeader:invoiceHeaderList
-             ) {
-            System.out.println("Invoice "+invoiceHeader.getInvoiceNum());
+        for (InvoiceHeader invoiceHeader : invoiceHeaderList
+        ) {
+            System.out.println("Invoice " + invoiceHeader.getInvoiceNum());
             System.out.println("{");
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
             String invoiceDate = dateFormat.format(invoiceHeader.getInvoiceDate());
-            System.out.println(invoiceDate+", "+invoiceHeader.getCustomerName());
-            for (InvoiceLine invoiceLine:invoiceHeader.getInvoiceLines()
-                 ) {
-                System.out.println(invoiceLine.getItemName()+", "+invoiceLine.getItemPrice()+", "+invoiceLine.getItemQuantity());
+            System.out.println(invoiceDate + ", " + invoiceHeader.getCustomerName());
+            for (InvoiceLine invoiceLine : invoiceHeader.getInvoiceLines()
+            ) {
+                System.out.println(invoiceLine.getItemName() + ", " + invoiceLine.getItemPrice() + ", " + invoiceLine.getItemQuantity());
             }
             System.out.println("}");
         }
-        String input = "";
+        if (isContinueInputHeader()) {
+            String input = "";
 
-        do {// Header loop
+            do {// Header loop
 
-            int invoiceNum=FileOperations.getCurrentInvoiceNumber()+1;
-            FileOperations.updateCurrentInvoiceNumber(invoiceNum);
-            Date invoiceDate= new Date();
-            String customerName=getCustomerName();
-            ArrayList<InvoiceLine> invoiceLineList= new ArrayList<InvoiceLine>();
-            do {// Item loop
-                String itemName=getItemName();
-                double itemPrice= getItemPrice();
-                int itemQuantity=getItemQuantity();
-                InvoiceLine invoiceLine = new InvoiceLine(invoiceNum,itemName,itemPrice,itemQuantity);
-                invoiceLineList.add(invoiceLine);
+                int invoiceNum = FileOperations.getCurrentInvoiceNumber() + 1;
+                FileOperations.updateCurrentInvoiceNumber(invoiceNum);
+                Date invoiceDate = new Date();
+                String customerName = getCustomerName();
+                ArrayList<InvoiceLine> invoiceLineList = new ArrayList<InvoiceLine>();
+
+                do {// Item loop
+                    String itemName = getItemName();
+                    double itemPrice = getItemPrice();
+                    int itemQuantity = getItemQuantity();
+                    InvoiceLine invoiceLine = new InvoiceLine(invoiceNum, itemName, itemPrice, itemQuantity);
+                    invoiceLineList.add(invoiceLine);
+                }
+                while (isContinueInputItem());
+
+                //Create new object to append in the csv file
+                InvoiceHeader invoiceHeader = new InvoiceHeader(invoiceNum, invoiceDate, customerName, invoiceLineList);
+                ArrayList<InvoiceHeader> invoiceHeaderListNew = new ArrayList<InvoiceHeader>();
+                invoiceHeaderListNew.add(invoiceHeader);
+                fileOperations.writeFile(invoiceHeaderListNew);
+
             }
 
-
-            while(isContinueInputItem().equals("Y"));
-            //Create new object to append in the csv file
-
-            InvoiceHeader invoiceHeader= new InvoiceHeader(invoiceNum,invoiceDate,customerName,invoiceLineList);
-            ArrayList<InvoiceHeader> invoiceHeaderListNew= new ArrayList<InvoiceHeader>();
-            invoiceHeaderListNew.add(invoiceHeader);
-            fileOperations.writeFile(invoiceHeaderListNew);
-
-        }while(isContinueInputHeader().equals("Y"));
-
+            while (isContinueInputHeader());
+        }
     }
-
-    public static String isContinueInputHeader()
-    {
+    public static boolean isContinueInputHeader() {
+        String input = "";
+        boolean isContinue=false;
+        boolean isOK = false;
         Scanner scanner = new Scanner(System.in);
         System.out.println("Do you want to enter another invoice? (Y/N)");
-        return scanner.next();
+        do {
+            input = scanner.next();
+            if (input.equals("Y") || input.equals("N")) {
+                isOK = true;
+                if (input.equals("Y")) {
+                    isContinue = true;
+                }
+            }
+            else
+                System.out.println("Input incorrect,Do you want to enter another invoice? (Y/N)");
+        } while (!isOK);
+        return isContinue;
     }
-    public static String isContinueInputItem()
+    public static boolean isContinueInputItem()
     {
+        String input = "";
+        boolean isContinue=false;
+        boolean isOK = false;
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Do you want to enter another item? (Y/N)");
-        return scanner.next();
+        System.out.println("Do you want to enter another invoice? (Y/N)");
+        do {
+            input = scanner.next();
+            if (input.equals("Y") || input.equals("N")) {
+                isOK = true;
+                if (input.equals("Y")) {
+                    isContinue = true;
+                }
+            }
+            else
+                System.out.println("Input incorrect,Do you want to enter another item? (Y/N)");
+        } while (!isOK);
+        return isContinue;
     }
     public static String getCustomerName()
     {

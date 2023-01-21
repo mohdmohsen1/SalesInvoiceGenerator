@@ -53,12 +53,12 @@ public class FileOperations {
 
 
         } catch (FileNotFoundException e) {
-            System.out.println("File not Found");
-            e.printStackTrace();
+            System.out.println("File not Found : "+e.getMessage());
+           // e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("File could not be read : "+e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error : "+e.getMessage());e.printStackTrace();
         } finally {
 
             return invoiceHeaderList;
@@ -67,8 +67,6 @@ public class FileOperations {
 
     public void writeFile(ArrayList<InvoiceHeader> invoiceHeaderList) {// Write invoice data to CSV file
         try {
-
-
             FileWriter fileWriterHeader = new FileWriter(pathHeader, true);
             for (InvoiceHeader invoiceHeader : invoiceHeaderList
             ) {
@@ -85,7 +83,7 @@ public class FileOperations {
             }
             fileWriterHeader.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("File not Found : "+e.getMessage());
         }
     }
 }
