@@ -11,7 +11,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -39,7 +41,9 @@ public class Main {
 
                 int invoiceNum = FileOperations.getCurrentInvoiceNumber() + 1;
                 FileOperations.updateCurrentInvoiceNumber(invoiceNum);
-                Date invoiceDate = new Date();
+                Calendar today = Calendar.getInstance();
+                today.set(Calendar.HOUR_OF_DAY, 0);
+                Date invoiceDate = today.getTime();
                 String customerName = getCustomerName();
                 ArrayList<InvoiceLine> invoiceLineList = new ArrayList<InvoiceLine>();
 
@@ -88,7 +92,7 @@ public class Main {
         boolean isContinue=false;
         boolean isOK = false;
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Do you want to enter another invoice? (Y/N)");
+        System.out.println("Do you want to enter another item? (Y/N)");
         do {
             input = scanner.next();
             if (input.equals("Y") || input.equals("N")) {
