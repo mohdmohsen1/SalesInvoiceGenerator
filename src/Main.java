@@ -55,6 +55,8 @@ public class Main {
                 InvoiceLine invoiceLine = new InvoiceLine(invoiceNum,itemName,itemPrice,itemQuantity);
                 invoiceLineList.add(invoiceLine);
             }
+
+
             while(isContinueInputItem().equals("Y"));
             //Create new object to append in the csv file
 

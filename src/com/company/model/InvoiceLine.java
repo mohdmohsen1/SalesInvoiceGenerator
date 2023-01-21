@@ -7,6 +7,7 @@ public class InvoiceLine {
     double itemPrice;// Item price
     int itemQuantity;//number of items purchased
 
+
     public InvoiceLine(int invoiceNum,String itemName,double itemPrice,int itemQuantity) {
         this.invoiceNum=invoiceNum;
         this.itemName = itemName;
