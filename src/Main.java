@@ -12,56 +12,40 @@ import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
         FileOperations fileOperations = new FileOperations();
-        ArrayList<InvoiceHeader> invoiceHeaderList = fileOperations.readFile();
-        for (InvoiceHeader invoiceHeader : invoiceHeaderList
-        ) {
-            System.out.println("Invoice " + invoiceHeader.getInvoiceNum());
-            System.out.println("{");
-            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            String invoiceDate = dateFormat.format(invoiceHeader.getInvoiceDate());
-            System.out.println(invoiceDate + ", " + invoiceHeader.getCustomerName());
-            for (InvoiceLine invoiceLine : invoiceHeader.getInvoiceLines()
-            ) {
-                System.out.println(invoiceLine.getItemName() + ", " + invoiceLine.getItemPrice() + ", " + invoiceLine.getItemQuantity());
-            }
-            System.out.println("}");
-        }
+        ArrayList<InvoiceHeader> invoiceHeaderList = fileOperations.readFile();//Read from CSV file
+        FileOperations.print(invoiceHeaderList);// Method to test reading from CSV
         if (isContinueInputHeader()) {
             String input = "";
 
             do {// Header loop
 
-                int invoiceNum = FileOperations.getCurrentInvoiceNumber() + 1;
-                FileOperations.updateCurrentInvoiceNumber(invoiceNum);
+                int invoiceNum = FileOperations.getCurrentInvoiceNumber() + 1;//Get invoice number for new invoice
+                FileOperations.updateCurrentInvoiceNumber(invoiceNum);//Update current invoice number
                 Calendar today = Calendar.getInstance();
                 today.set(Calendar.HOUR_OF_DAY, 0);
-                Date invoiceDate = today.getTime();
-                String customerName = getCustomerName();
+                Date invoiceDate = today.getTime();//Get date.now
+                String customerName = getCustomerName();// Get customer name from user
                 ArrayList<InvoiceLine> invoiceLineList = new ArrayList<InvoiceLine>();
 
                 do {// Item loop
-                    String itemName = getItemName();
-                    double itemPrice = getItemPrice();
-                    int itemQuantity = getItemQuantity();
+                    String itemName = getItemName();// Get item name from user
+                    double itemPrice = getItemPrice();// Get item price from user
+                    int itemQuantity = getItemQuantity();// Get item quantity from User
                     InvoiceLine invoiceLine = new InvoiceLine(invoiceNum, itemName, itemPrice, itemQuantity);
-                    invoiceLineList.add(invoiceLine);
+                    invoiceLineList.add(invoiceLine);//Add to parent object
                 }
                 while (isContinueInputItem());
 
                 //Create new object to append in the csv file
                 InvoiceHeader invoiceHeader = new InvoiceHeader(invoiceNum, invoiceDate, customerName, invoiceLineList);
                 ArrayList<InvoiceHeader> invoiceHeaderListNew = new ArrayList<InvoiceHeader>();
-                invoiceHeaderListNew.add(invoiceHeader);
-                fileOperations.writeFile(invoiceHeaderListNew);
-
+                invoiceHeaderListNew.add(invoiceHeader);//Add to parent object
+                fileOperations.writeFile(invoiceHeaderListNew);//Save/update CSV file.
             }
             while (isContinueInputHeader());
         }
@@ -74,9 +58,9 @@ public class Main {
         System.out.println("Do you want to enter another invoice? (Y/N)");
         do {
             input = scanner.next();
-            if (input.equals("Y") || input.equals("N")) {
+            if (input.equalsIgnoreCase("Y") || input.equalsIgnoreCase("N")) {
                 isOK = true;
-                if (input.equals("Y")) {
+                if (input.equalsIgnoreCase("Y")) {
                     isContinue = true;
                 }
             }
@@ -94,9 +78,9 @@ public class Main {
         System.out.println("Do you want to enter another item? (Y/N)");
         do {
             input = scanner.next();
-            if (input.equals("Y") || input.equals("N")) {
+            if (input.equalsIgnoreCase("Y") || input.equalsIgnoreCase("N")) {
                 isOK = true;
-                if (input.equals("Y")) {
+                if (input.equalsIgnoreCase("Y")) {
                     isContinue = true;
                 }
             }
@@ -105,28 +89,70 @@ public class Main {
         } while (!isOK);
         return isContinue;
     }
-    public static String getCustomerName()
-    {
+    public static String getCustomerName() {
+        String input = "";
+        boolean isOK = false;
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter customer name");
-        return scanner.next();
+        do {
+            input = scanner.next();
+            if (!input.equals("")) {
+                isOK = true;
+            } else
+                System.out.println("Input incorrect,Please enter customer name.");
+        } while (!isOK);
+        return input;
     }
     public static String getItemName()
     {
+        String input = "";
+        boolean isOK = false;
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter item name");
-        return scanner.next();
+        do {
+            input = scanner.next();
+            if (!input.equals("")) {
+                isOK = true;
+            } else
+                System.out.println("Input incorrect,Please enter item name.");
+        } while (!isOK);
+        return input;
     }
-    public static double getItemPrice()
-    {
-        Scanner scanner = new Scanner(System.in);
+    public static double getItemPrice() {
+        double input = 0;
+        boolean isOK = false;
         System.out.println("Please enter item price");
-        return scanner.nextDouble();
+        do {
+            try {
+                Scanner scanner = new Scanner(System.in);
+                input = scanner.nextDouble();
+                if (input > 0)
+                    isOK = true;
+                else
+                    System.out.println("Input incorrect,Please enter item price.");
+            } catch (InputMismatchException e) {
+                System.out.println("Input incorrect,Please enter item price.");
+            }
+        } while (!isOK);
+        return input;
     }
     public static int getItemQuantity()
     {
-        Scanner scanner = new Scanner(System.in);
+        int input = 0;
+        boolean isOK = false;
         System.out.println("Please enter item quantity");
-        return scanner.nextInt();
+        do {
+            try {
+                Scanner scanner = new Scanner(System.in);
+                input = scanner.nextInt();
+                if (input > 0)
+                    isOK = true;
+                else
+                    System.out.println("Input incorrect,Please enter item quantity.");
+            } catch (InputMismatchException e) {
+                System.out.println("Input incorrect,Please enter item quantity.");
+            }
+        } while (!isOK);
+        return input;
     }
 }
