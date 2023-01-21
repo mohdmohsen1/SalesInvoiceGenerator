@@ -63,7 +63,6 @@ public class Main {
                 fileOperations.writeFile(invoiceHeaderListNew);
 
             }
-
             while (isContinueInputHeader());
         }
     }

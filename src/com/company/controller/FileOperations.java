@@ -73,11 +73,11 @@ public class FileOperations {
                 DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
                 String invoiceDate = dateFormat.format(invoiceHeader.getInvoiceDate());
 
-                fileWriterHeader.write( invoiceHeader.getInvoiceNum() + "," + invoiceDate + "," + invoiceHeader.getCustomerName());
+                fileWriterHeader.write( invoiceHeader.getInvoiceNum() + "," + invoiceDate + "," + invoiceHeader.getCustomerName()+"\n");
                 FileWriter fileWriterItem = new FileWriter(pathItem, true);
                 for (InvoiceLine invoiceLine : invoiceHeader.getInvoiceLines()
                 ) {
-                    fileWriterItem.write( invoiceLine.getInvoiceNum() + "," + invoiceLine.getItemName() + "," + invoiceLine.getItemPrice() + "," + invoiceLine.getItemQuantity());
+                    fileWriterItem.write( invoiceLine.getInvoiceNum() + "," + invoiceLine.getItemName() + "," + invoiceLine.getItemPrice() + "," + invoiceLine.getItemQuantity()+"\n");
                 }
                 fileWriterItem.close();
             }
